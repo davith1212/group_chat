@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- 	 // <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
+	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	 <script type ="text/javascript" src="/socket.io/socket.io.js"></script>
+	<link rel="stylesheet" type="text/css" href="styles.css">	
+	<title>Group Chat</title>
+	<script type="text/javascript">
+	$(document).ready(function (){
+	var socket = io.connect();
+	var name = prompt("What is your name?");
+	socket.emit('got_a_new_user', name);
+
+		socket.on('new_user', function(name){
+			$('#convo').append( "****<span class='name'>"+name+"</span>" + " <span class='green'>has entered the room:</span>"+ "<span id='date'>"+ new Date()+"</span>****</br>");
+		})
+		$('#submit').click(function(){
+			var input = $('#input').val();
+			socket.emit('message', {
+				name: name, 
+				input: input
+			});
+			$('#input').val("");
+			return false;
+		})
+		socket.on('message', function(input) {
+			$("#convo").append("<span class='name'>"+input.name+"</span>"+": "+input.input + "</br>");
+		})
+	});
+	</script>	
+</head>
+<body>
+	<div id="container">
+		<div id="main_content">
+			<h1>Bored of Conversation.</h1>
+			<div id="box">
+				<p id="convo"></p>
+			</div>
+			<form>
+				<input type="text" id="input" name="input" placeholder="Enter message here...">
+				<input type="submit" id="submit">
+			</form>
+		</div>
+
+	</div>
+</body>
+</html>
